@@ -1,8 +1,6 @@
-pipeline {
-agent any
-stages {
+node {
+try {
 stage('Build') {
-steps {
 sh '''
 echo "Building Java project..."
 echo "Listing workspace contents:"
@@ -13,9 +11,7 @@ javac -d build src/*.java
 echo "Build successful"
 '''
 }
-}
 stage('Test') {
-steps {
 sh '''
 echo "Running JUnit tests for File-Encrypter..."
 cd "Password Protection"
@@ -37,9 +33,7 @@ java -jar junit-platform-console-standalone.jar \
 echo "JUnit tests executed successfully"
 '''
 }
-}
 stage('Deploy') {
-steps {
 sh '''
 echo "Deploying (Packaging) File-Encrypter Application..."
 cd "Password Protection"
@@ -48,14 +42,9 @@ jar cf FileEncrypter.jar -C build .
 echo "Deployment successful - Artifact ready"
 '''
 }
-}
-}
-post {
-success {
 echo "Pipeline executed successfully!"
-}
-failure {
+} catch (Exception e) {
 echo "Pipeline failed!"
-}
+throw e
 }
 }
